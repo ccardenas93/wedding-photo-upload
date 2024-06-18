@@ -26,7 +26,7 @@
                 const response = await fetch('https://api.github.com/repos/ccardenas93/wedding-photo-upload/dispatches', {
                     method: 'POST',
                     headers: {
-                        'Authorization': 'token YOUR_GITHUB_TOKEN',
+                        'Authorization': 'token ' + process.env.GH_TOKEN,
                         'Accept': 'application/vnd.github.v3+json',
                         'Content-Type': 'application/json'
                     },
