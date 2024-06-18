@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Photo Upload</title>
+</head>
+<body>
+    <h1>Welcome to Our Wedding!</h1>
+    <p>Take a picture and upload it to our wedding album.</p>
+    <input type="file" accept="image/*" capture="environment" id="cameraInput">
+    <button id="uploadButton">Upload</button>
+
+    <script>
+        document.getElementById('uploadButton').onclick = async function() {
+            const fileInput = document.getElementById('cameraInput');
+            if (fileInput.files.length === 0) {
+                alert('Please take a picture first.');
+                return;
+            }
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('https://api.github.com/repos/ccardenas93/wedding-photo-upload/contents/uploads/' + file.name, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': 'token YOUR_GITHUB_TOKEN',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'upload wedding photo',
+                    content: await file.text(),
+                    branch: 'main'
+                })
+            });
+
+            if (response.ok) {
+                alert('Photo uploaded successfully!');
+            } else {
+                alert('Failed to upload photo.');
+            }
+        };
+    </script>
+</body>
+</html>
