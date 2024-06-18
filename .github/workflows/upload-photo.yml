@@ -1,0 +1,19 @@
+name: Upload Photo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository content
+      uses: actions/checkout@v2
+
+    - name: Create uploads directory if not exists
+      run: mkdir -p uploads
+
+    - name: Move uploaded photos to uploads directory
+      run: mv *.* uploads/ || echo "No new photos to upload"
