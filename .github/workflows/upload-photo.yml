@@ -1,13 +1,13 @@
 name: Upload Photo
 
 on:
-  push:
-    branches:
-      - main
+  repository_dispatch:
+    types: [upload-photo]
 
 jobs:
   upload:
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout repository content
       uses: actions/checkout@v2
@@ -15,5 +15,17 @@ jobs:
     - name: Create uploads directory if not exists
       run: mkdir -p uploads
 
-    - name: Move uploaded photos to uploads directory
-      run: mv *.* uploads/ || echo "No new photos to upload"
+    - name: Decode and save the image
+      env:
+        IMAGE_DATA: ${{ github.event.client_payload.image_data }}
+        IMAGE_NAME: ${{ github.event.client_payload.image_name }}
+      run: |
+        echo "$IMAGE_DATA" | base64 -d > "uploads/$IMAGE_NAME"
+
+    - name: Commit and push the image
+      run: |
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+        git add uploads/$IMAGE_NAME
+        git commit -m "Add new photo $IMAGE_NAME"
+        git push
